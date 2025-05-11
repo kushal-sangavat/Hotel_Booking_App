@@ -19,25 +19,30 @@ A beautifully designed **Flutter-based hotel booking app** that allows users to 
   Scrollable, interactive horizontal hotel listings with hotel name, price, and location.
 
 ---
-- **Folder Structure**
-- lib/
-  ├── main.dart
-  ├── services/
-  │   └── widget_support.dart
-  └── screens/
-  └── home.dart
-  assets/
-  └── images/
-  ├── home.jpg
-  ├── hotel1.jpg
-  └── hotel2.jpg
+## 📁 Folder Structure
+
+```plaintext
+lib/
+├── main.dart
+├── services/
+│   └── widget_support.dart
+└── screens/
+    └── home.dart
+assets/
+└── images/
+    ├── home.jpg
+    ├── hotel1.jpg
+    └── hotel2.jpg
+```
+
+  
 
 ## 📸 Screenshots
 
-| Home Screen |
-|-------------|
-| ![Screenshot](images/HomeScreen_Screenshot.png) |
-
+<h3>🏠 Home Screen</h3>
+<p align="center">
+  <img src="images/HomeScreen_Screenshot.png" alt="Home Screen" width="300"/>
+</p>
 ---
 
 ## 🚀 Getting Started
