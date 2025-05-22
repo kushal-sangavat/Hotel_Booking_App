@@ -1,48 +1,74 @@
 # 🏨 Hotel Booking App
 
-A beautifully designed **Flutter-based hotel booking app** that allows users to explore hotels in different locations, search for travel destinations, and view curated listings—all with a sleek, modern interface.
+A beautifully crafted **Flutter-based hotel booking app** enabling users to discover, explore, and book hotels across various destinations. It features seamless navigation, user authentication, and a modern, mobile-first UI design.
 
 ---
 
 ## 📱 Features
 
-- 🌍 **Location-based Discovery**  
-  View top destinations and trending hotels with attractive imagery.
+- 🔐 **User Authentication**  
+  Secure login and signup system for users.
 
-- 🔍 **Search Functionality**  
-  Users can search for places they want to visit with a responsive search field.
+- 🏨 **Hotel Listings & Booking**  
+  View and book hotels with pricing, details, and descriptions.
 
-- 🖼️ **Modern UI/UX**  
-  Smooth layouts and stylish components, including image cards, search bar, and custom text styling.
+- 👤 **Profile Management**  
+  Allows users to update and view their profile information.
 
-- 🏨 **Hotel Listings**  
-  Scrollable, interactive horizontal hotel listings with hotel name, price, and location.
+- 💼 **Wallet System**  
+  Basic wallet screen interface for future payment integration.
+
+- 📱 **Bottom Navigation**  
+  Smooth navigation between Home, Profile, Wallet, and Booking screens.
+
+- 🗂️ **Persistent State**  
+  Using Shared Preferences to manage login state and simple data.
 
 ---
+
 ## 📁 Folder Structure
 
 ```plaintext
 lib/
 ├── main.dart
+├── pages/
+│   ├── booking.dart
+│   ├── bottomnav.dart
+│   ├── detail_page.dart
+│   ├── home.dart
+│   ├── login.dart
+│   ├── profile.dart
+│   ├── signup.dart
+│   └── wallet.dart
 ├── services/
+│   ├── database.dart
+│   ├── shared_pref.dart
 │   └── widget_support.dart
-└── screens/
-    └── home.dart
 assets/
 └── images/
-    ├── home.jpg
-    ├── hotel1.jpg
-    └── hotel2.jpg
+    ├── HomeScreen1_Screenshot.png
+    ├── HomeScreen2_Screenshot.png
+    ├── LogInScreen_Screenshot.png
+    └── SignUpScreen_Screenshot.png
+
 ```
 
   
 
 ## 📸 Screenshots
 
-<h3>🏠 Home Screen</h3>
+<h3>🏠 Home Screens</h3>
 <p align="center">
-  <img src="images/HomeScreen_Screenshot.png" alt="Home Screen" width="300"/>
+  <img src="images/HomeScreen1_Screenshot.jpeg" alt="Home Screen 1" width="250" style="margin-right: 40px;"/>
+  <img src="images/HomeScreen2_Screenshot.jpeg" alt="Home Screen 2" width="250"/>
 </p>
+
+<h3>🔐 Authentication Screens</h3>
+<p align="center">
+  <img src="images/LogInScreen_Screenshot.jpeg" alt="Login Screen" width="250" style="margin-right: 40px;"/>
+  <img src="images/SignUpScreen_Screenshot.jpeg" alt="Signup Screen" width="250"/>
+</p>
+
 ---
 
 ## 🚀 Getting Started
@@ -59,6 +85,6 @@ Ensure you have the following installed:
 
 ```bash
 git clone https://github.com/your-username/hotel-booking-app.git
-cd hotel-booking-app
+cd bookingapp
 flutter pub get
 flutter run
