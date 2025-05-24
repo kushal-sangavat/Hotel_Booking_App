@@ -44,6 +44,8 @@ dev_dependencies:
   firebase_auth: ^5.5.4
   random_string: ^2.3.1
   shared_preferences: ^2.5.3
+  image_picker: ^1.1.2
+  firebase_storage: ^12.4.6
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

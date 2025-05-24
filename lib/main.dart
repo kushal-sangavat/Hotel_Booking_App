@@ -3,6 +3,7 @@ import 'pages/home.dart';
 import 'pages/detail_page.dart';
 import 'pages/signup.dart';
 import 'pages/login.dart';
+import 'hotelowner/hotel_detail.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async{
