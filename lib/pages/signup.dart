@@ -34,9 +34,9 @@ class _SignUpState extends State<SignUp> {
           "Email": mailcontroller.text,
           "id": id,
         };
-        SharedpreferenceHelper().saveUserName(namecontroller.text);
-        SharedpreferenceHelper().saveUserEmail(mailcontroller.text);
-        SharedpreferenceHelper().saveUserId(id);
+        await SharedpreferenceHelper().saveUserName(namecontroller.text);
+        await SharedpreferenceHelper().saveUserEmail(mailcontroller.text);
+        await SharedpreferenceHelper().saveUserId(id);
         await DatabaseMethods().addUserInfo(userInfoMap, id);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

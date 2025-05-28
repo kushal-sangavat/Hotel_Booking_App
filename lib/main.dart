@@ -1,3 +1,4 @@
+import 'package:bookingapp/pages/bottomnav.dart';
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'pages/detail_page.dart';
