@@ -15,12 +15,13 @@ class _BookingState extends State<Booking> {
 
   Stream? bookingStream;
 
-  getontheload() async{
+  getontheload() async {
     id = await SharedpreferenceHelper().getUserId();
     bookingStream = await DatabaseMethods().getUserbookings(id!);
     setState(() {
 
     });
+  }
 
 
   @override
