@@ -25,6 +25,7 @@ local.properties
 build/
 coverage/
 generated_plugin_registrant.dart
+devtools_options.yaml
 
 # Android-specific
 android/.gradle/
