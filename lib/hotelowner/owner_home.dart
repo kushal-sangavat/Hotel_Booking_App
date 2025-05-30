@@ -11,7 +11,11 @@ class _OwnerHomeState extends State<OwnerHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(child: Column(children: [],),),
+      body: Container(child: Column(children: [
+        Container(child: Column(children: [
+
+        ],),)
+      ],),),
     );
   }
 }

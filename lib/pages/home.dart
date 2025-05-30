@@ -51,6 +51,7 @@ class _HomeState extends State<Home> {
                               hdtv: ds["HDTV"],
                               kitchen: ds["Kitchen"],
                               bathroom: ds["Bathroom"],
+                              hotelid: ds.id,
                             ),
                       ),
                     );

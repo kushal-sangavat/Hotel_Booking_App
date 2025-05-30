@@ -1,28 +1,48 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedpreferenceHelper {
-  static String userIdKey = "USERKEY";
   static String userNameKey = "USERNAMEKEY";
-  static String userEmailKey = "USEREMAILKEY";
+  static String userIdKey = "USERIDKEY";
   static String userImageKey = "USERIMAGEKEY";
+  static String userEmailKey = "USEREMAILKEY"; // ✅ Added this
 
-  Future<bool> saveUserId(String getUserId) async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString(userIdKey, getUserId);
+  Future<String?> getUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userNameKey);
   }
 
-  Future<bool> saveUserName(String getUserName) async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString(userNameKey, getUserName);
+  Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userIdKey);
   }
 
-  Future<bool> saveUserEmail(String getUserEmail) async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString(userEmailKey, getUserEmail);
+  Future<String?> getUserImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userImageKey);
   }
 
-  Future<bool> saveUserImage(String getUserImage) async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setString(userImageKey, getUserImage);
+  Future<String?> getUserEmail() async { // ✅ Getter for email
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userEmailKey);
+  }
+
+  Future<void> saveUserName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(userNameKey, name);
+  }
+
+  Future<void> saveUserId(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(userIdKey, id);
+  }
+
+  Future<void> saveUserImage(String imageUrl) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(userImageKey, imageUrl);
+  }
+
+  Future<void> saveUserEmail(String email) async { // ✅ Saver for email
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(userEmailKey, email);
   }
 }

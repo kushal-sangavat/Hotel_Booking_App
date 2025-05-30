@@ -1,4 +1,5 @@
 import 'package:bookingapp/pages/bottomnav.dart';
+import '../services/constant.dart';
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'pages/detail_page.dart';
@@ -6,10 +7,13 @@ import 'pages/signup.dart';
 import 'pages/login.dart';
 import 'hotelowner/hotel_detail.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Stripe.publishableKey = publishedkey;
+  await Stripe.instance.applySettings();
   runApp(const MyApp());
 }
 
