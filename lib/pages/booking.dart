@@ -40,7 +40,7 @@ class _BookingState extends State<Booking> {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 DocumentSnapshot ds = snapshot.data.docs[index];
-                final format = DateFormat('dd, MMM yyyy');
+                final format = DateFormat('dd, MM-yyyy');
                 final date = format.parse(ds["CheckIn"]);
                 final now = DateTime.now();
 

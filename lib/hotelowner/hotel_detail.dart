@@ -1,5 +1,6 @@
 import 'package:bookingapp/hotelowner/owner_home.dart';
 import 'package:flutter/material.dart';
+import '../services/shared_pref.dart';
 import '../services/widget_support.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -20,6 +21,19 @@ class _HotelDetailState extends State<HotelDetail> {
       isChecked2 = false,
       isChecked3 = false;
 
+  String? id;
+
+  getonthesharedpref() async {
+    id = await SharedpreferenceHelper().getUserId();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    getonthesharedpref();
+    super.initState();
+  }
+
   File? selectedImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -27,6 +41,7 @@ class _HotelDetailState extends State<HotelDetail> {
   TextEditingController hotelchargescontroller = new TextEditingController();
   TextEditingController hoteladdresscontroller = new TextEditingController();
   TextEditingController hoteldesccontroller = new TextEditingController();
+  TextEditingController hotelcitycontroller = new TextEditingController();
 
   Future getImage() async {
     var image = await _picker.pickImage(source: ImageSource.gallery);
@@ -165,6 +180,26 @@ class _HotelDetailState extends State<HotelDetail> {
                           ),
                         ),
                       ),
+
+                      SizedBox(height: 20.0),
+                      Text("City", style: AppWidget.normaltextstyle(20.0)),
+                      SizedBox(height: 5.0),
+                      Container(
+                        padding: EdgeInsets.only(left: 20.0),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFececf8),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: TextField(
+                          controller: hotelcitycontroller,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Enter City",
+                            hintStyle: AppWidget.normaltextstyle(18.0),
+                          ),
+                        ),
+                      ),
+
                       SizedBox(height: 20.0),
                       Text(
                         "What Service you want to offer?",
@@ -285,8 +320,6 @@ class _HotelDetailState extends State<HotelDetail> {
                       SizedBox(height: 20.0),
                       GestureDetector(
                         onTap: () async {
-                          String addId = randomAlphaNumeric(10);
-
                           // Reference fitrebaseStorageRef = FirebaseStorage
                           //     .instance
                           //     .ref()
@@ -297,20 +330,28 @@ class _HotelDetailState extends State<HotelDetail> {
                           // );
                           // var downloadUrl =
                           //     await (await Task).ref.getDownloadURL();
+                          String firstletter =
+                              hotelnamecontroller.text
+                                  .substring(0, 1)
+                                  .toUpperCase();
 
                           Map<String, dynamic> addHotel = {
                             "Image": "",
                             "HotelName": hotelnamecontroller.text,
                             "HotelCharges": hotelchargescontroller.text,
+                            "HotelCity": hotelcitycontroller.text.toLowerCase(),
                             "HotelAddress": hoteladdresscontroller.text,
+                            "UpdatedName":
+                                hotelnamecontroller.text.toUpperCase(),
+                            "SearchKey": firstletter.toUpperCase(),
                             "HotelDescription": hoteldesccontroller.text,
                             "WiFi": isChecked ? "true" : "false",
                             "HDTV": isChecked1 ? "true" : "false",
                             "Kitchen": isChecked2 ? "true" : "false",
                             "Bathroom": isChecked3 ? "true" : "false",
-                            "id": addId,
+                            "id": id,
                           };
-                          await DatabaseMethods().addHotel(addHotel, addId);
+                          await DatabaseMethods().addHotel(addHotel, id!);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: Colors.green,

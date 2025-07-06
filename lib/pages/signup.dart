@@ -1,15 +1,16 @@
 import 'package:bookingapp/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:bookingapp/services/widget_support.dart';
+import '../hotelowner/hotel_detail.dart';
 import 'login.dart';
 import 'package:bookingapp/services/shared_pref.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:random_string/random_string.dart';
 import 'bottomnav.dart';
 
-
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+  String redirect;
+  SignUp({required this.redirect});
 
   @override
   State<SignUp> createState() => _SignUpState();
@@ -33,11 +34,14 @@ class _SignUpState extends State<SignUp> {
           "Name": namecontroller.text,
           "Email": mailcontroller.text,
           "id": id,
+          "Role": widget.redirect == "Owner" ? "Owner" : "User",
+          "Wallet": "0",
         };
         await SharedpreferenceHelper().saveUserName(namecontroller.text);
         await SharedpreferenceHelper().saveUserEmail(mailcontroller.text);
         await SharedpreferenceHelper().saveUserId(id);
         await DatabaseMethods().addUserInfo(userInfoMap, id);
+        await SharedpreferenceHelper().saveUserWallet("0");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.green,
@@ -47,10 +51,15 @@ class _SignUpState extends State<SignUp> {
             ),
           ),
         );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Bottomnav()),
-        );
+        widget.redirect == "Owner"
+            ? Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HotelDetail()),
+            )
+            : Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Bottomnav()),
+            );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -97,7 +106,10 @@ class _SignUpState extends State<SignUp> {
               ),
               SizedBox(height: 5.0),
               Center(
-                child: Text("Sign Up", style: AppWidget.headlinetextstyle(25.0)),
+                child: Text(
+                  "Sign Up",
+                  style: AppWidget.headlinetextstyle(25.0),
+                ),
               ),
               SizedBox(height: 5.0),
               Center(
@@ -188,7 +200,9 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 30.0),
               GestureDetector(
                 onTap: () {
-                  if(namecontroller.text != "" && mailcontroller.text != "" && passwordcontroller.text != "") {
+                  if (namecontroller.text != "" &&
+                      mailcontroller.text != "" &&
+                      passwordcontroller.text != "") {
                     setState(() {
                       email = mailcontroller.text;
                       password = passwordcontroller.text;
@@ -222,7 +236,9 @@ class _SignUpState extends State<SignUp> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LogIn()),
+                    MaterialPageRoute(
+                      builder: (context) => LogIn(redirect: widget.redirect),
+                    ),
                   );
                 },
                 child: Row(

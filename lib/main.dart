@@ -1,4 +1,5 @@
 import 'package:bookingapp/pages/bottomnav.dart';
+import 'package:bookingapp/pages/onboarding.dart';
 import '../services/constant.dart';
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
@@ -8,6 +9,7 @@ import 'pages/login.dart';
 import 'hotelowner/hotel_detail.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'hotelowner/owner_home.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +46,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home:LogIn(),
+      home:Bottomnav(),
     );
   }
 }

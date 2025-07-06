@@ -17,8 +17,8 @@ class _BottomnavStateState extends State<Bottomnav> {
 
   late Home HomePage;
   late Booking booking;
-  late Profile profile;
   late Wallet wallet;
+  late Profile profile;
 
   int currentIndex = 0;
 
@@ -26,9 +26,10 @@ class _BottomnavStateState extends State<Bottomnav> {
   void initState() {
     HomePage = Home();
     booking = Booking();
-    profile = Profile();
     wallet = Wallet();
-    pages = [HomePage, booking, profile, wallet];
+    profile = Profile();
+
+    pages = [HomePage, booking, wallet, profile];
     super.initState();
   }
 
@@ -48,8 +49,9 @@ class _BottomnavStateState extends State<Bottomnav> {
         items: [
           Icon(Icons.home, size: 30, color: Colors.white),
           Icon(Icons.shopping_cart, size: 30, color: Colors.white),
-          Icon(Icons.person, size: 30, color: Colors.white),
           Icon(Icons.wallet, size: 30, color: Colors.white),
+          Icon(Icons.person, size: 30, color: Colors.white),
+
         ],
       ),
       body: pages[currentIndex],

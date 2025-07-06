@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'city_hotel.dart';
 import 'detail_page.dart';
 
 class Home extends StatefulWidget {
@@ -24,6 +25,78 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     getontheload();
+    getCityCounts();
+  }
+
+  bool search = false;
+  var queryResultSet = [];
+  var tempSearchStore = [];
+  TextEditingController searchcontroller = new TextEditingController();
+
+  initiateSearch(value) {
+    if (value.length == 0) {
+      setState(() {
+        queryResultSet = [];
+        tempSearchStore = [];
+      });
+    }
+    setState(() {
+      search = true;
+    });
+
+    var CapitalizedValue = value.substring(0,1).toUpperCase() + value.substring(1);
+    if (queryResultSet.isEmpty && value.length == 1) {
+      DatabaseMethods().search(value).then((QuerySnapshot docs) {
+        for (int i = 0; i < docs.docs.length; ++i) {
+          queryResultSet.add(docs.docs[i].data());
+        }
+      });
+    } else {
+      tempSearchStore = [];
+      queryResultSet.forEach((element) {
+        if (element["UpdatedName"].startWith(CapitalizedValue)) {
+          setState(() {
+            tempSearchStore.add(element);
+          });
+        }
+      });
+    }
+  }
+
+  int? mumbaicount, newyorkcount, balicount, dubaicount;
+
+  Future<void> getCityCounts() async {
+    final firestore = FirebaseFirestore.instance;
+
+    final mumbaiQuerySnapshot = await firestore
+    .collection('Hotel')
+    .where('HotelCity', isEqualTo: 'mumbai')
+    .get();
+
+    mumbaicount = mumbaiQuerySnapshot.docs.length;
+
+    final newyorkQuerySnapshot = await firestore
+    .collection('Hotel')
+    .where('HotelCity', isEqualTo: 'new york')
+    .get();
+
+    newyorkcount = newyorkQuerySnapshot.docs.length;
+
+    final baliQuerySnapshot = await firestore
+    .collection('Hotel')
+    .where('HotelCity', isEqualTo: 'bali')
+    .get();
+
+    balicount = baliQuerySnapshot.docs.length;
+
+    final dubaiQuerySnapshot = await firestore
+    .collection('Hotel')
+    .where('HotelCity', isEqualTo: 'dubai')
+    .get();
+
+    dubaicount = dubaiQuerySnapshot.docs.length;
+
+    setState(() {});
   }
 
   Widget allHotels() {
@@ -72,7 +145,7 @@ class _HomeState extends State<Home> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(30),
                               child: Image.asset(
-                                "images/hotel1.jpg",
+                                ds["Image"],
                                 width: MediaQuery.of(context).size.width / 1.2,
                                 fit: BoxFit.cover,
                                 height: 230,
@@ -90,7 +163,7 @@ class _HomeState extends State<Home> {
                                   ),
                                   SizedBox(
                                     width:
-                                        MediaQuery.of(context).size.width / 4,
+                                        MediaQuery.of(context).size.width / 3.4,
                                   ),
                                   Text(
                                     "\₹" + ds["HotelCharges"],
@@ -240,106 +313,126 @@ class _HomeState extends State<Home> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(bottom: 5.0),
-                      child: Material(
-                        elevation: 2.5,
-                        borderRadius: BorderRadius.circular(30),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(30),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CityHotel(city: "Mumbai"),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: Image.asset(
-                                  "images/mumbai.jpg",
-                                  height: 200,
-                                  width: 180,
-                                  fit: BoxFit.cover,
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 5.0),
+                        child: Material(
+                          elevation: 2.5,
+                          borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Image.asset(
+                                    "images/mumbai.jpg",
+                                    height: 200,
+                                    width: 180,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 10.0),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Text(
-                                  "Mumbai",
-                                  style: AppWidget.headlinetextstyle(20.0),
+                                SizedBox(height: 10.0),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Text(
+                                    "Mumbai",
+                                    style: AppWidget.headlinetextstyle(20.0),
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.hotel,
-                                      color: Colors.blue,
-                                      size: 30.0,
-                                    ),
-                                    SizedBox(width: 5.0),
-                                    Text(
-                                      "10 Hotels",
-                                      style: AppWidget.normaltextstyle(18.0),
-                                    ),
-                                  ],
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.hotel,
+                                        color: Colors.blue,
+                                        size: 30.0,
+                                      ),
+                                      SizedBox(width: 5.0),
+                                      Text(
+                                        mumbaicount.toString() + " Hotels",
+                                        style: AppWidget.normaltextstyle(18.0),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 20.0, bottom: 5.0),
-                      child: Material(
-                        elevation: 2.5,
-                        borderRadius: BorderRadius.circular(30),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(30),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CityHotel(city: "New York"),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(30),
-                                child: Image.asset(
-                                  "images/newyork.jpg",
-                                  height: 200,
-                                  width: 180,
-                                  fit: BoxFit.cover,
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 20.0, bottom: 5.0),
+                        child: Material(
+                          elevation: 2.5,
+                          borderRadius: BorderRadius.circular(30),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(30),
+                                  child: Image.asset(
+                                    "images/newyork.jpg",
+                                    height: 200,
+                                    width: 180,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 10.0),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Text(
-                                  "New York",
-                                  style: AppWidget.headlinetextstyle(20.0),
+                                SizedBox(height: 10.0),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Text(
+                                    "New York",
+                                    style: AppWidget.headlinetextstyle(20.0),
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 20.0),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.hotel,
-                                      color: Colors.blue,
-                                      size: 30.0,
-                                    ),
-                                    SizedBox(width: 5.0),
-                                    Text(
-                                      "8 Hotels",
-                                      style: AppWidget.normaltextstyle(18.0),
-                                    ),
-                                  ],
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20.0),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.hotel,
+                                        color: Colors.blue,
+                                        size: 30.0,
+                                      ),
+                                      SizedBox(width: 5.0),
+                                      Text(
+                                        newyorkcount.toString() + " Hotels",
+                                        style: AppWidget.normaltextstyle(18.0),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -385,7 +478,7 @@ class _HomeState extends State<Home> {
                                     ),
                                     SizedBox(width: 5.0),
                                     Text(
-                                      "15 Hotels",
+                                      balicount.toString() + " Hotels",
                                       style: AppWidget.normaltextstyle(18.0),
                                     ),
                                   ],
@@ -437,7 +530,7 @@ class _HomeState extends State<Home> {
                                     ),
                                     SizedBox(width: 5.0),
                                     Text(
-                                      "25 Hotels",
+                                      dubaicount.toString() + " Hotels",
                                       style: AppWidget.normaltextstyle(18.0),
                                     ),
                                   ],

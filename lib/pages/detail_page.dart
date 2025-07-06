@@ -27,20 +27,22 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  Map<String, dynamic>? paymentIntent;
   TextEditingController guestcontroller = new TextEditingController();
-  var finalamount;
+  int? finalamount;
 
   DateTime? startDate;
   DateTime? endDate;
   int daysDifference = 1;
 
-  Map<String, dynamic>? paymentIntent;
-  String? username, userid, userimage;
+  String? username, userid, userimage, wallet, id;
 
   getontheload() async {
     username = await SharedpreferenceHelper().getUserName();
+    wallet = await SharedpreferenceHelper().getUserWallet();
     userid = await SharedpreferenceHelper().getUserId();
     userimage = await SharedpreferenceHelper().getUserImage();
+    id = await SharedpreferenceHelper().getUserId();
     print(username);
     print(userid);
     print(userimage);
@@ -345,7 +347,7 @@ class _DetailPageState extends State<DetailPage> {
                                   setState(() {
                                     finalamount = int.parse(widget.price);
                                     finalamount =
-                                        finalamount *
+                                        finalamount! *
                                         int.parse(value) *
                                         daysDifference;
                                   });
@@ -365,25 +367,55 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                             SizedBox(height: 20.0),
                             GestureDetector(
-                              onTap: () {
-                                if (guestcontroller.text.isEmpty ||
-                                    startDate == null ||
-                                    endDate == null) {
+                              onTap: () async {
+                                if (int.parse(wallet!) > finalamount!) {
+                                  if (guestcontroller.text.isEmpty ||
+                                      startDate == null ||
+                                      endDate == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "Please fill all details",
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  if (finalamount! <= 0) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Invalid amount")),
+                                    );
+                                    return;
+                                  }
+
+                                  int updatedamount =
+                                      int.parse(wallet!) - finalamount!;
+                                  await DatabaseMethods().updateWallet(
+                                    id!,
+                                    updatedamount.toString(),
+                                  );
+                                  await SharedpreferenceHelper().saveUserWallet(
+                                    updatedamount.toString(),
+                                  );
+
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text("Please fill all details"),
+                                      backgroundColor: Colors.green,
+                                      content: Text(
+                                        "Hotel Booked Successfully!",
+                                        style: TextStyle(fontSize: 18.0),
+                                      ),
                                     ),
                                   );
-                                  return;
-                                }
-
-                                if (finalamount <= 0) {
+                                } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("Invalid amount")),
+                                    SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text("Insufficient Balance"),
+                                    ),
                                   );
-                                  return;
                                 }
-                                makePayment(finalamount.toString());
                               },
                               child: Container(
                                 height: 50,
@@ -413,128 +445,5 @@ class _DetailPageState extends State<DetailPage> {
         ),
       ),
     );
-  }
-
-  Future<void> makePayment(String amount) async {
-    try {
-      paymentIntent = await createPaymentIntent(amount, 'INR');
-      await Stripe.instance
-          .initPaymentSheet(
-            paymentSheetParameters: SetupPaymentSheetParameters(
-              paymentIntentClientSecret: paymentIntent?['client_secret'],
-              style: ThemeMode.dark,
-              merchantDisplayName: 'Sangavat Hotel',
-            ),
-          )
-          .then((value) {});
-      displayPaymentSheet(amount);
-    } catch (e, s) {
-      print("exception: $e$s");
-    }
-  }
-
-  displayPaymentSheet(String amount) async {
-    try {
-      await Stripe.instance
-          .presentPaymentSheet()
-          .then((value) async {
-            String addId = randomAlphaNumeric(10);
-            Map<String, dynamic> userhotelbooking = {
-              "Username": username,
-              "CheckIn": '${_formatDate(startDate)}',
-              "CheckOut": '${_formatDate(endDate)}',
-              "Guests": guestcontroller.text,
-              "Total": finalamount.toString(),
-              "HotelName": widget.name,
-            };
-
-            await DatabaseMethods().addUserBooking(
-              userhotelbooking,
-              userid!,
-              addId,
-            );
-            await DatabaseMethods().addHotelOwnerBooking(
-              userhotelbooking,
-              widget.hotelid,
-              addId,
-            );
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.green,
-                content: Text(
-                  "Hotel Booked Successfully!",
-                  style: TextStyle(fontSize: 18.0),
-                ),
-              ),
-            );
-
-            showDialog(
-              context: context,
-              builder:
-                  (_) => AlertDialog(
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.green,
-                              size: 30.0,
-                            ),
-                            Text(
-                              "Payment Successful",
-                              style: AppWidget.headlinetextstyle(20.0),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-            );
-            paymentIntent = null;
-          })
-          .onError((error, stackTrace) {
-            print("Error is:---> $error $stackTrace");
-          });
-    } on StripeException catch (e) {
-      print("Error is:---> $e");
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(content: Text("Cancelled")),
-      );
-    } catch (e) {
-      print("Error is:---> $e");
-    }
-  }
-
-  Future<Map<String, dynamic>> createPaymentIntent(
-    String amount,
-    String currency,
-  ) async {
-    try {
-      Map<String, dynamic> body = {
-        'amount': calculateAmount(amount),
-        'currency': currency,
-        'payment_method_types[]': 'card',
-      };
-      var response = await http.post(
-        Uri.parse('https://api.stripe.com/v1/payment_intents'),
-        headers: {
-          'Authorization': 'Bearer $secretkey',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body,
-      );
-      return json.decode(response.body);
-    } catch (err) {
-      throw Exception('Failed to create payment intent: ${err.toString()}');
-    }
-  }
-
-  calculateAmount(String amount) {
-    final calculatedAmount = (int.parse(amount)) * 100;
-    return calculatedAmount.toString();
   }
 }
